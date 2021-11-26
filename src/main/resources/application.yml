@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: fizz-buzz-consumer
+  banner:
+    location: classpath:/banner.txt
+
+adapters:
+  output:
+    fizz-buzz:
+      base-url: https://codetest.jurosbaixos.com.br/v1
+      api-key: LucasWillMakeThisLookEasy
+      conn-timeout: 2s
+      conn-read-timeout: 2s
