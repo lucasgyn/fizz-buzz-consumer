@@ -23,24 +23,23 @@ class FizzBuzzService(
     }
 
     suspend fun execute() {
-        while (true) {
-            try {
-                val numbers = fizzBuzzPort.retrieveNumbers()
-                val fizzBuzzJson = numbers.map { number -> number.toFizzBuzz() }.toJson()
-                val shaHash = DigestUtils.sha256Hex(fizzBuzzJson)
-                fizzBuzzPort.translate(shaHash, fizzBuzzJson)
-                if (fizzBuzzPort.findTreasure(shaHash)) {
-                    logger.info { "[Fizz Buzz] Wow! The treasure has been found :)" }
-                    exitProcess(0)
-                } else {
-                    fizzBuzzPort.delete(shaHash)
-                    logger.info { "[Fizz Buzz] The treasure has not yet been found :( Let's try again..." }
-                    execute()
-                }
-            } catch (e: Exception) {
-                logger.error { e }
-                logger.info { "[Fizz Buzz] A failure has occurred :( Let's try again..." }
+        try {
+            val numbers = fizzBuzzPort.retrieveNumbers()
+            val fizzBuzzJson = numbers.map { number -> number.toFizzBuzz() }.toJson()
+            val shaHash = DigestUtils.sha256Hex(fizzBuzzJson)
+            fizzBuzzPort.translate(shaHash, fizzBuzzJson)
+            if (fizzBuzzPort.findTreasure(shaHash)) {
+                logger.info { "[Fizz Buzz] Wow! The treasure has been found :)" }
+                exitProcess(0)
+            } else {
+                fizzBuzzPort.delete(shaHash)
+                logger.info { "[Fizz Buzz] The treasure has not yet been found :( Let's try again..." }
+                execute()
             }
+        } catch (e: Exception) {
+            logger.error { e }
+            logger.info { "[Fizz Buzz] A failure has occurred :( Let's try again..." }
+            execute()
         }
     }
 }
